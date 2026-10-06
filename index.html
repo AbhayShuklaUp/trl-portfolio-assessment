@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b2d">
+  <title>TRL Portfolio | Technology Readiness Evaluation</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #142238;
+      --muted: #68778c;
+      --line: #e2e8f0;
+      --paper: #ffffff;
+      --canvas: #f4f7fb;
+      --navy: #101b2d;
+      --blue: #2563eb;
+      --blue-pale: #edf4ff;
+      --green: #087e68;
+      --green-pale: #e9f7f2;
+      --amber: #ad6410;
+      --amber-pale: #fff5e5;
+      --violet: #6941c6;
+      --violet-pale: #f2edff;
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+      font-synthesis: none;
+      text-rendering: optimizeLegibility;
+    }
+
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); }
+    button { font: inherit; }
+    .shell { min-height: 100vh; }
+    .topbar {
+      min-height: 66px;
+      padding: 0 clamp(20px, 5vw, 76px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      background: var(--navy);
+      color: #fff;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-size: 13px; font-weight: 700; letter-spacing: .04em; }
+    .brand-mark {
+      width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center;
+      background: #234982; color: #bcd8ff; font-size: 13px; letter-spacing: 0;
+    }
+    .topbar-right { display: flex; align-items: center; gap: 18px; color: #b8c4d5; font-size: 12px; }
+    .date-chip { border: 1px solid #34445a; padding: 7px 10px; border-radius: 20px; }
+    .main { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 42px 0 60px; }
+    .eyebrow { color: var(--blue); text-transform: uppercase; letter-spacing: .13em; font-size: 10px; font-weight: 800; }
+    h1 { margin: 10px 0 9px; font-size: clamp(27px, 4vw, 38px); letter-spacing: -.04em; line-height: 1.13; }
+    .intro { color: var(--muted); margin: 0; font-size: 14px; line-height: 1.65; max-width: 680px; }
+    .header-row { display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+    .header-actions { display: flex; gap: 9px; flex: 0 0 auto; }
+    .button {
+      border: 1px solid var(--line); border-radius: 9px; background: #fff; color: var(--ink);
+      padding: 10px 13px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .button:hover { border-color: #aab9cc; background: #f9fbff; }
+    .button.primary { color: #fff; border-color: var(--navy); background: var(--navy); }
+    .button.primary:hover { background: #20334e; }
+    .tabs { display: flex; gap: 24px; border-bottom: 1px solid var(--line); margin-top: 28px; }
+    .tab {
+      color: var(--muted); background: none; border: 0; border-bottom: 2px solid transparent;
+      padding: 0 1px 12px; font-size: 12px; font-weight: 700; cursor: pointer;
+    }
+    .tab[aria-selected="true"] { color: var(--blue); border-bottom-color: var(--blue); }
+    .view { display: none; padding-top: 22px; }
+    .view.active { display: block; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .stat, .panel, .project-card, .framework-card { background: var(--paper); border: 1px solid var(--line); border-radius: 13px; }
+    .stat { padding: 17px 19px; }
+    .stat-label { color: var(--muted); font-size: 11px; }
+    .stat-value { font-size: 24px; font-weight: 750; margin-top: 7px; letter-spacing: -.035em; }
+    .stat-note { color: var(--muted); font-size: 10px; margin-top: 4px; }
+    .section-title { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 27px 0 12px; }
+    .section-title h2 { font-size: 15px; margin: 0; letter-spacing: -.02em; }
+    .section-title span { color: var(--muted); font-size: 11px; }
+    .portfolio-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+    .project-card { padding: 17px; text-align: left; width: 100%; cursor: pointer; color: inherit; transition: transform .15s, border-color .15s, box-shadow .15s; }
+    .project-card:hover { transform: translateY(-2px); border-color: #b7c8df; box-shadow: 0 8px 22px #1528420d; }
+    .project-card:focus-visible, .tab:focus-visible, .button:focus-visible { outline: 3px solid #8cb7ff; outline-offset: 3px; }
+    .card-top { display: flex; justify-content: space-between; gap: 10px; align-items: start; }
+    .project-name { font-size: 13px; font-weight: 750; line-height: 1.35; }
+    .project-subtitle { color: var(--muted); font-size: 10px; margin-top: 4px; }
+    .level-badge { background: var(--blue-pale); color: var(--blue); border-radius: 8px; padding: 7px 9px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+    .track { background: #edf1f6; height: 5px; margin: 17px 0 12px; border-radius: 5px; overflow: hidden; }
+    .track-fill { height: 100%; background: var(--blue); border-radius: inherit; }
+    .card-evidence { color: #46566d; font-size: 11px; line-height: 1.5; min-height: 33px; }
+    .card-link { color: var(--blue); margin-top: 14px; font-size: 10px; font-weight: 750; }
+    .takeaway {
+      margin-top: 16px; padding: 17px 19px; background: var(--navy); color: white;
+      border-radius: 12px; display: flex; gap: 14px; align-items: flex-start;
+    }
+    .takeaway-icon { width: 25px; height: 25px; display: grid; place-items: center; flex: 0 0 auto; border-radius: 50%; background: #263c5c; color: #a7c9ff; font-weight: 800; }
+    .takeaway strong { display: block; font-size: 12px; margin: 1px 0 5px; }
+    .takeaway p { color: #c4cedb; margin: 0; font-size: 11px; line-height: 1.6; }
+    .footnote { color: var(--muted); font-size: 10px; margin: 13px 2px 0; line-height: 1.55; }
+    .live-banner {
+      display: flex; align-items: flex-start; gap: 11px; padding: 12px 14px;
+      background: var(--amber-pale); border: 1px solid #f2dfb9; border-radius: 10px;
+      color: #76511f; font-size: 10px; line-height: 1.55;
+    }
+    .live-banner strong { color: #784900; }
+    .demo-dot { flex: 0 0 auto; width: 8px; height: 8px; margin-top: 4px; border-radius: 50%; background: #d58b21; }
+    .live-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 16px 0; }
+    .live-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .live-select { border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); padding: 9px 10px; font-size: 11px; }
+    .live-status { color: var(--muted); font-size: 10px; white-space: nowrap; }
+    .live-status strong { color: var(--amber); }
+    .live-layout { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(240px, .8fr); gap: 13px; }
+    .live-panel { background: #fff; border: 1px solid var(--line); border-radius: 13px; padding: 17px; min-width: 0; }
+    .live-project-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .live-project-head h2 { font-size: 15px; margin: 0; }
+    .live-project-head p { font-size: 10px; color: var(--muted); margin: 5px 0 0; }
+    .live-tr-state { font-size: 10px; font-weight: 800; color: var(--blue); background: var(--blue-pale); padding: 7px 9px; border-radius: 8px; white-space: nowrap; }
+    .live-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 15px; }
+    .live-kpi { padding: 11px; border-radius: 9px; background: #f7f9fc; min-width: 0; }
+    .live-kpi-label { color: var(--muted); font-size: 9px; line-height: 1.4; }
+    .live-kpi-value { font-size: clamp(16px, 2vw, 21px); font-weight: 750; margin-top: 5px; letter-spacing: -.03em; white-space: nowrap; }
+    .live-kpi-note { color: var(--muted); font-size: 9px; margin-top: 3px; }
+    .chart-heading { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; margin: 19px 0 7px; }
+    .chart-heading strong { font-size: 10px; }
+    .chart-heading span { color: var(--muted); font-size: 9px; }
+    .trend-chart { width: 100%; height: 145px; overflow: visible; }
+    .chart-grid { stroke: #e9eef5; stroke-width: 1; }
+    .chart-line { fill: none; stroke: var(--blue); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .chart-area { fill: #2563eb; opacity: .08; }
+    .chart-end { fill: #fff; stroke: var(--blue); stroke-width: 2; }
+    .chart-tick { fill: #8a97a8; font-size: 9px; }
+    .insight-label { color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-size: 9px; font-weight: 800; }
+    .alert-box { margin-top: 11px; padding: 11px; border-radius: 9px; background: var(--green-pale); color: #365e57; font-size: 10px; line-height: 1.55; }
+    .alert-box.warning { background: var(--amber-pale); color: #76511f; }
+    .alert-box strong { display: block; margin-bottom: 3px; }
+    .source-basis { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 11px; color: var(--muted); font-size: 9px; line-height: 1.55; }
+    .live-activity { margin-top: 13px; }
+    .live-activity h3 { margin: 0 0 9px; font-size: 11px; }
+    .activity-item { border-top: 1px solid var(--line); padding: 9px 0; color: #526278; font-size: 9px; line-height: 1.5; }
+    .activity-item time { color: #8a97a8; margin-right: 6px; white-space: nowrap; }
+    .live-note { color: var(--muted); font-size: 9px; line-height: 1.55; margin: 12px 1px 0; }
+    .decision-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 15px; }
+    .decision-card { padding: 16px; border: 1px solid var(--line); background: #fff; border-radius: 12px; min-width: 0; }
+    .decision-card.primary-decision { border-top: 3px solid var(--blue); }
+    .decision-card.risk-decision { border-top: 3px solid #d58b21; }
+    .decision-card.action-decision { border-top: 3px solid var(--green); }
+    .decision-label { color: var(--muted); font-size: 9px; text-transform: uppercase; letter-spacing: .08em; font-weight: 800; }
+    .decision-card h2 { font-size: 14px; margin: 8px 0 5px; line-height: 1.35; }
+    .decision-card p { color: #526278; font-size: 10px; line-height: 1.55; margin: 0; }
+    .decision-projects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; }
+    .decision-projects button { width: 100%; min-height: 38px; border: 1px solid var(--line); background: #fff; color: var(--ink); padding: 8px 10px; border-radius: 8px; font-size: 10px; font-weight: 700; text-align: left; cursor: pointer; }
+    .decision-projects button:hover { border-color: #aab9cc; background: #f9fbff; }
+    .decision-projects span { display: block; color: var(--muted); font-size: 9px; font-weight: 400; margin-top: 3px; }
+    .trend-caption { color: var(--muted); font-size: 9px; line-height: 1.5; margin: -2px 0 3px; }
+    .presentation-help { color: var(--muted); font-size: 9px; white-space: nowrap; }
+    .shell:fullscreen { overflow: auto; background: var(--canvas); }
+    .shell:fullscreen .main { width: min(1320px, calc(100% - 64px)); padding-top: 24px; }
+
+    .project-layout { display: grid; grid-template-columns: 235px 1fr; gap: 15px; align-items: start; }
+    .project-list { display: grid; gap: 8px; }
+    .project-option {
+      border: 1px solid var(--line); background: #fff; text-align: left; border-radius: 10px;
+      padding: 12px; cursor: pointer; color: var(--ink);
+    }
+    .project-option[aria-pressed="true"] { border-color: #7da8f7; box-shadow: 0 0 0 2px #e6efff; }
+    .option-name { font-size: 11px; font-weight: 750; }
+    .option-meta { color: var(--muted); font-size: 10px; margin-top: 5px; }
+    .panel { padding: 21px; }
+    .detail-heading { display: flex; justify-content: space-between; gap: 15px; align-items: start; padding-bottom: 17px; border-bottom: 1px solid var(--line); }
+    .detail-heading h2 { margin: 0; font-size: 19px; letter-spacing: -.03em; }
+    .detail-heading p { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+    .detail-level { text-align: right; white-space: nowrap; }
+    .detail-level b { font-size: 25px; color: var(--blue); }
+    .detail-level span { display: block; color: var(--muted); font-size: 9px; margin-top: 1px; }
+    .detail-track { margin-top: 16px; }
+    .detail-track-labels { display: flex; justify-content: space-between; color: var(--muted); font-size: 9px; }
+    .detail-section { padding-top: 18px; }
+    .detail-section h3 { font-size: 11px; margin: 0 0 10px; text-transform: uppercase; letter-spacing: .08em; }
+    .fact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .fact { background: #f7f9fc; border-radius: 8px; padding: 11px; }
+    .fact b { display: block; font-size: 10px; margin-bottom: 4px; }
+    .fact span { color: #526278; font-size: 10px; line-height: 1.5; }
+    .boundary { border-left: 3px solid #f0b34e; padding: 10px 12px; background: var(--amber-pale); border-radius: 0 8px 8px 0; color: #71501e; font-size: 10px; line-height: 1.55; }
+    .next-gate { display: flex; gap: 10px; align-items: flex-start; background: var(--green-pale); padding: 12px; border-radius: 9px; }
+    .next-gate b { display: block; color: var(--green); font-size: 10px; margin-bottom: 4px; }
+    .next-gate p { margin: 0; color: #365e57; font-size: 10px; line-height: 1.55; }
+    .source { color: var(--muted); font-size: 9px; margin-top: 15px; line-height: 1.5; }
+    .comparison { width: 100%; border-collapse: collapse; background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+    .comparison th, .comparison td { text-align: left; padding: 12px 13px; border-bottom: 1px solid var(--line); font-size: 10px; vertical-align: top; line-height: 1.5; }
+    .comparison th { background: #f8fafd; color: var(--muted); font-size: 9px; text-transform: uppercase; letter-spacing: .07em; }
+    .comparison tr:last-child td { border-bottom: 0; }
+    .comparison td:first-child { font-weight: 750; white-space: nowrap; }
+    .trl-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .trl-card { padding: 14px; min-height: 94px; background: #fff; border: 1px solid var(--line); border-radius: 11px; }
+    .trl-card.current { border-color: #8bb2f7; background: #f7faff; }
+    .trl-number { font-size: 10px; color: var(--blue); font-weight: 800; }
+    .trl-card h3 { margin: 6px 0 5px; font-size: 11px; }
+    .trl-card p { margin: 0; color: var(--muted); font-size: 9px; line-height: 1.5; }
+    .framework-note { margin-top: 15px; color: var(--muted); font-size: 10px; line-height: 1.6; }
+    .hidden { display: none !important; }
+    @media (max-width: 760px) {
+      .main { width: min(100% - 28px, 600px); padding-top: 30px; }
+      .header-row { align-items: flex-start; flex-direction: column; }
+      .topbar { padding: 0 16px; }
+      .topbar-right { gap: 8px; }
+      .stats, .portfolio-cards { grid-template-columns: 1fr; }
+      .stat { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+      .stat-value { margin: 0; }
+      .stat-note { display: none; }
+      .project-layout { grid-template-columns: 1fr; }
+      .live-layout { grid-template-columns: 1fr; }
+      .live-toolbar { align-items: flex-start; flex-direction: column; }
+      .decision-grid { grid-template-columns: 1fr; }
+      .decision-projects { grid-template-columns: 1fr; }
+      .presentation-help { white-space: normal; }
+      .project-list { grid-template-columns: repeat(3, 1fr); }
+      .project-option { padding: 10px 8px; }
+      .fact-grid, .trl-grid { grid-template-columns: repeat(2, 1fr); }
+      .comparison { display: block; overflow-x: auto; }
+    }
+    @media (max-width: 420px) {
+      .date-chip { display: none; }
+      .tabs { gap: 16px; }
+      .project-list { grid-template-columns: 1fr; }
+      .fact-grid, .trl-grid { grid-template-columns: 1fr; }
+      .header-actions { width: 100%; }
+      .header-actions .button { flex: 1; }
+    }
+    @media print {
+      body { background: #fff; }
+      .topbar { background: #fff; color: var(--ink); border-bottom: 1px solid var(--line); padding: 12px 0; }
+      .brand-mark { background: #edf4ff; color: var(--blue); }
+      .topbar-right, .header-actions, .tabs, .project-list, .card-link, .live-toolbar { display: none !important; }
+      .main { width: 100%; padding: 18px 0; }
+      .view { display: none !important; }
+      #dashboard.view { display: block !important; }
+      #overview.view { display: none !important; }
+      .stat, .project-card, .takeaway { break-inside: avoid; }
+      .takeaway { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">TRL</span><span>TECHNOLOGY READINESS EVALUATION</span></div>
+      <div class="topbar-right"><span>Portfolio assessment</span><span class="date-chip">October 2026</span></div>
+    </header>
+
+    <main class="main">
+      <div class="header-row">
+        <div>
+          <h1>TRL Portfolio Live Dashboard</h1>
+        </div>
+        <div class="header-actions">
+          <button class="button" id="fullscreenButton" type="button" aria-label="Enter full-screen presentation mode">Present full screen</button>
+          <button class="button" id="printButton" type="button">Print</button>
+          <button class="button primary" type="button" data-open-tab="projects">Explore projects</button>
+        </div>
+      </div>
+
+      <nav class="tabs" aria-label="Assessment sections" role="tablist">
+        <button class="tab" id="tab-dashboard" role="tab" aria-selected="true" aria-controls="dashboard" data-tab="dashboard">Live dashboard</button>
+        <button class="tab" id="tab-overview" role="tab" aria-selected="false" aria-controls="overview" data-tab="overview">Portfolio summary</button>
+        <button class="tab" id="tab-projects" role="tab" aria-selected="false" aria-controls="projects" data-tab="projects">Project evidence</button>
+        <button class="tab" id="tab-framework" role="tab" aria-selected="false" aria-controls="framework" data-tab="framework">TRL framework</button>
+      </nav>
+
+      <section class="view active" id="dashboard" role="tabpanel" aria-labelledby="tab-dashboard">
+        <div class="section-title" style="margin-top:0"><h2>Portfolio decision summary</h2><span>Evidence-based assessment · September–October 2026</span></div>
+        <div class="decision-grid">
+          <article class="decision-card primary-decision"><div class="decision-label">Highest assessed readiness</div><h2>AquaPure HydroShield-X9 · TRL 7</h2><p>Highest of the three assessed programs, supported by a 30-day operational site run.</p></article>
+          <article class="decision-card risk-decision"><div class="decision-label">Biggest evidence gap</div><h2>QuantumIonic · no physical proof-of-concept</h2><p>Current evidence is computational; no cells have been assembled or bench-tested.</p></article>
+          <article class="decision-card action-decision"><div class="decision-label">Portfolio next move</div><h2>Fund the next proof point—not the next TRL claim</h2><p>Prioritize project-specific evidence gates before changing any readiness rating.</p></article>
+        </div>
+        <ul class="decision-projects" aria-label="Project next actions">
+          <li><button type="button" data-project="aerocrop">AeroCrop · TRL 4<span>Run untethered outdoor tests</span></button></li>
+          <li><button type="button" data-project="quantumionic">QuantumIonic · TRL 2<span>Build and test physical cells</span></button></li>
+          <li><button type="button" data-project="aquapure">AquaPure · TRL 7<span>Resolve valve scaling; qualify system</span></button></li>
+        </ul>
+        <div class="live-toolbar">
+          <div class="live-controls">
+            <label class="live-status" for="liveProject">Project</label>
+            <select id="liveProject" class="live-select" aria-label="Select dashboard project">
+              <option value="aerocrop">AeroCrop UAV</option>
+              <option value="quantumionic">QuantumIonic Battery</option>
+              <option value="aquapure">AquaPure HydroShield-X9</option>
+            </select>
+            <label class="live-status" for="scenarioSelect">Illustrative scenario</label>
+            <select id="scenarioSelect" class="live-select" aria-label="Select illustrative scenario">
+              <option value="normal">Reference view</option>
+              <option value="stress">Illustrative stress case</option>
+            </select>
+          </div>
+          <div class="live-controls">
+            <span class="live-status"><strong id="runState">AUTO-REFRESH</strong> · updated <time id="lastUpdated">—</time></span>
+            <button class="button" id="toggleRun" type="button">Pause</button>
+            <button class="button" id="stepTick" type="button">Step +1</button>
+          </div>
+        </div>
+        <div class="live-layout">
+          <article class="live-panel">
+            <div class="live-project-head"><div><h2 id="liveProjectName">AeroCrop UAV</h2><p id="liveProjectSummary">Lab Validation</p></div><span class="live-tr-state" id="liveTrl">TRL 4 · assessed</span></div>
+            <div class="live-kpis" id="liveKpis" aria-live="polite"></div>
+            <div class="chart-heading"><strong id="chartTitle">Inference latency trend</strong><span>Generated example · not telemetry</span></div>
+            <p class="trend-caption" id="trendCaption">Illustrative values vary around the documented reference; they are not project measurements.</p>
+            <svg class="trend-chart" id="trendChart" viewBox="0 0 640 150" role="img" aria-label="Illustrative simulated trend chart">
+              <line class="chart-grid" x1="42" y1="20" x2="625" y2="20"></line>
+              <line class="chart-grid" x1="42" y1="75" x2="625" y2="75"></line>
+              <line class="chart-grid" x1="42" y1="130" x2="625" y2="130"></line>
+              <text class="chart-tick" x="3" y="23">—</text><text class="chart-tick" x="3" y="78">—</text><text class="chart-tick" x="3" y="133">—</text>
+              <path class="chart-area" id="chartArea" d=""></path>
+              <polyline class="chart-line" id="chartLine" points=""></polyline>
+              <circle class="chart-end" id="chartEnd" cx="0" cy="0" r="4"></circle>
+              <text class="chart-tick" x="42" y="147">24 ticks ago</text><text class="chart-tick" x="570" y="147">Now</text>
+            </svg>
+            <div class="source-basis" id="chartBasis"></div>
+          </article>
+          <aside class="live-panel">
+            <div class="insight-label">Assessment note</div>
+            <div class="alert-box" id="alertBox" aria-live="polite"><strong>ASSESSMENT CONTEXT</strong>Loading source-backed project evidence.</div>
+            <div class="live-activity"><h3>Dashboard updates</h3><div id="activityFeed" aria-live="polite"></div></div>
+            <div class="source-basis"><strong>TRL remains evidence-based:</strong> only the source documents can support a change to the assessed readiness level.</div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="view" id="overview" role="tabpanel" aria-labelledby="tab-overview">
+        <div class="stats" aria-label="Portfolio highlights">
+          <article class="stat"><div><div class="stat-label">Programs evaluated</div><div class="stat-note">Aerospace, energy, water</div></div><div class="stat-value">03</div></article>
+          <article class="stat"><div><div class="stat-label">Readiness range</div><div class="stat-note">Lowest to highest assessed</div></div><div class="stat-value">TRL 2-7</div></article>
+          <article class="stat"><div><div class="stat-label">Assessment standard</div><div class="stat-note">Conservative evidence threshold</div></div><div class="stat-value">APCTT</div></article>
+        </div>
+
+        <div class="section-title"><h2>Portfolio at a glance</h2><span>Select a project for its evidence and next gate</span></div>
+        <div class="portfolio-cards">
+          <button class="project-card" type="button" data-project="aerocrop" aria-label="Explore AeroCrop UAV, TRL 4">
+            <div class="card-top"><div><div class="project-name">AeroCrop UAV</div><div class="project-subtitle">Autonomous canopy assessment</div></div><span class="level-badge">TRL 4</span></div>
+            <div class="track" aria-label="TRL 4 of 9"><div class="track-fill" style="width:44.44%"></div></div>
+            <div class="card-evidence">Lab-validated breadboard; 42 ms inference in tethered mockups.</div>
+            <div class="card-link">View evidence and TRL 5 gate &rarr;</div>
+          </button>
+          <button class="project-card" type="button" data-project="quantumionic" aria-label="Explore QuantumIonic Battery, TRL 2">
+            <div class="card-top"><div><div class="project-name">QuantumIonic Battery</div><div class="project-subtitle">Silicon-anode solid-state interface</div></div><span class="level-badge">TRL 2</span></div>
+            <div class="track" aria-label="TRL 2 of 9"><div class="track-fill" style="width:22.22%"></div></div>
+            <div class="card-evidence">Concept and simulations only; no physical cells or testing.</div>
+            <div class="card-link">View evidence and TRL 3 gate &rarr;</div>
+          </button>
+          <button class="project-card" type="button" data-project="aquapure" aria-label="Explore AquaPure HydroShield X9, TRL 7">
+            <div class="card-top"><div><div class="project-name">AquaPure HydroShield-X9</div><div class="project-subtitle">Industrial wastewater filtration</div></div><span class="level-badge">TRL 7</span></div>
+            <div class="track" aria-label="TRL 7 of 9"><div class="track-fill" style="width:77.78%"></div></div>
+            <div class="card-evidence">30-day operational run; 15,000 L/day and 99.4% rejection.</div>
+            <div class="card-link">View evidence and TRL 8 gate &rarr;</div>
+          </button>
+        </div>
+
+        <p class="footnote">Basis: supplied technical documentation packages dated September-October 2026. Ratings are evidence-based assessments, not independent certification.</p>
+      </section>
+
+      <section class="view" id="projects" role="tabpanel" aria-labelledby="tab-projects">
+        <div class="section-title" style="margin-top:0"><h2>Project evidence and next gate</h2><span>Choose a project to view its assessment</span></div>
+        <div class="project-layout">
+          <div class="project-list" role="group" aria-label="Select project">
+            <button class="project-option" type="button" data-project="aerocrop" aria-pressed="true"><div class="option-name">AeroCrop UAV</div><div class="option-meta">TRL 4 / Lab validation</div></button>
+            <button class="project-option" type="button" data-project="quantumionic" aria-pressed="false"><div class="option-name">QuantumIonic Battery</div><div class="option-meta">TRL 2 / Concept formulated</div></button>
+            <button class="project-option" type="button" data-project="aquapure" aria-pressed="false"><div class="option-name">AquaPure HydroShield-X9</div><div class="option-meta">TRL 7 / Operational demo</div></button>
+          </div>
+          <article class="panel" id="projectDetail" aria-live="polite"></article>
+        </div>
+        <div class="section-title"><h2>Cross-project comparison</h2><span>Current level and next evidence gate</span></div>
+        <div style="overflow-x:auto">
+          <table class="comparison">
+            <thead><tr><th>Program</th><th>TRL</th><th>Evidence environment</th><th>Key evidence</th><th>Next gate</th></tr></thead>
+            <tbody>
+              <tr><td>AeroCrop UAV</td><td>4</td><td>Indoor lab, simulated targets</td><td>42 ms latency; tethered mockups</td><td>Outdoor relevant-environment testing</td></tr>
+              <tr><td>QuantumIonic</td><td>2</td><td>Computational models</td><td>500 Wh/kg framework; 84% theoretical dendrite mitigation</td><td>Build and test physical cells</td></tr>
+              <tr><td>AquaPure X9</td><td>7</td><td>Industrial operational site</td><td>30-day run; 99.4% rejection</td><td>Address valve reliability; complete qualification</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="view" id="framework" role="tabpanel" aria-labelledby="tab-framework">
+        <div class="section-title" style="margin-top:0"><h2>Technology Readiness Levels</h2><span>UN APCTT / NASA-aligned definitions</span></div>
+        <div class="trl-grid" id="trlGrid"></div>
+        <p class="framework-note">TRL describes maturity of a technology, not commercial viability or investment attractiveness. A level is assigned only when its criteria are supported by the evidence reviewed. The three assessed projects are highlighted above.</p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const projects = {
+      aerocrop: {
+        name: "AeroCrop UAV",
+        title: "Autonomous Canopy Assessment UAV",
+        level: 4,
+        stage: "Lab Validation",
+        evidence: [
+          ["Integrated system", "Optical-flow array and Alpha-V1 edge board"],
+          ["Test setting", "Indoor robotics lab with simulated plant targets and controlled lighting"],
+          ["Flight and control", "Tethered mockups; breadboard flight controller adjusted orientation without human override"],
+          ["Measured result", "42 ms average inference latency"]
+        ],
+        boundary: "Evidence is limited to a controlled indoor lab and tethered mockups. Field permission, untethered outdoor flight, weather exposure, and ruggedization are not yet demonstrated.",
+        next: "Advance toward TRL 5 by securing field-test permission, conducting non-tethered outdoor flights, characterizing performance in wind/glare/moisture, and ruggedizing the airframe.",
+        source: "Project AeroCrop Technical Update, October 2026 (presentation slides 4-5)."
+      },
+      quantumionic: {
+        name: "QuantumIonic Battery",
+        title: "Silicon-Anode Solid-State Interface",
+        level: 2,
+        stage: "Concept Formulated",
+        evidence: [
+          ["Concept", "Theoretical 500 Wh/kg solid-state cell architecture"],
+          ["Method", "Mathematical modeling and molecular-dynamics simulations"],
+          ["Reported finding", "Up to 84% dendrite mitigation in simulation; theoretical, not experimentally verified"],
+          ["Physical work", "No materials sourced, cells assembled, or benchtop electrical tests performed"]
+        ],
+        boundary: "The evidence is computational only. No physical cell or experimental proof-of-concept has been produced, so a higher readiness level is not supported.",
+        next: "Advance toward TRL 3 by sourcing the electrolyte materials, assembling coin or pouch cells, and conducting benchtop electrochemical testing.",
+        source: "QuantumIonic Battery Research Lab Memorandum, September 2026 (presentation slides 6-7)."
+      },
+      aquapure: {
+        name: "AquaPure HydroShield-X9",
+        title: "Industrial Wastewater Filtration System",
+        level: 7,
+        stage: "Operational Demo",
+        evidence: [
+          ["Prototype and site", "Full-scale, trailer-mounted system at a Gujarat chemical manufacturing facility"],
+          ["Operational run", "30 continuous days; 15,000 L/day throughput"],
+          ["Operating range", "4.5-5.2 bar pressure; pH 3.2-10.4"],
+          ["Measured result", "99.4% heavy-metal particulate rejection"]
+        ],
+        boundary: "Scaling encrustation required manual backwash-valve cleaning on day 24. Supply-chain finalization, BIS environmental certification, and single-point-of-failure remediation remain open.",
+        next: "Advance toward TRL 8 by redesigning the backwash valve with anti-scaling coatings, finalizing membrane supply, completing BIS certification, and demonstrating unattended reliability.",
+        source: "AquaPure Solutions Engineering Log, Gujarat site report (presentation slides 8-10)."
+      }
+    };
+
+    const illustrativeTrends = {
+      aerocrop: {
+        label: "Inference latency",
+        unit: "ms",
+        baseline: 42,
+        precision: 0,
+        spread: 5,
+        stressOffset: 23,
+        chart: "Inference latency trend",
+        basis: "The source reports 42 ms average inference latency in tethered indoor mockups. Trend points are invented examples centered on that reference, not recorded test results.",
+        normalInsight: "The chart animates an invented example around the source-reported 42 ms reference. Evidence is limited to indoor, tethered lab mockups.",
+        stressInsight: "This illustrative stress case visualizes a possible latency increase. It is not an observed test result; outdoor, untethered performance remains untested."
+      },
+      quantumionic: {
+        label: "Modeled dendrite mitigation",
+        unit: "%",
+        baseline: 84,
+        precision: 1,
+        spread: 2,
+        stressOffset: -12,
+        chart: "Modeled mitigation trend",
+        basis: "The source reports up to 84% dendrite mitigation in molecular-dynamics simulations. Trend points are invented examples around this theoretical result, not experiment data.",
+        normalInsight: "The chart is only a visual example around a computational finding. No physical cells have been assembled or bench-tested.",
+        stressInsight: "This illustrative stress case visualizes sensitivity in a theoretical model. It is not an experiment; physical proof-of-concept remains the next evidence gate."
+      },
+      aquapure: {
+        label: "Throughput",
+        unit: "L/day",
+        baseline: 15000,
+        precision: 0,
+        spread: 280,
+        stressOffset: -1900,
+        chart: "Throughput trend",
+        basis: "The source reports 15,000 L/day during a 30-day operational run. Trend points are invented examples centered on that reference, not site telemetry.",
+        normalInsight: "The chart animates an invented example around the reported site-run throughput. The source also records that the backwash valve required manual cleaning on day 24.",
+        stressInsight: "This illustrative stress case visualizes a possible throughput reduction. The documented day-24 valve cleaning is source evidence; the changing chart values are not."
+      }
+    };
+
+    const sourceFacts = {
+      aerocrop: [
+        ["Average inference", "42 ms", "Reported lab result"],
+        ["Test environment", "Indoor lab", "Simulated targets"],
+        ["Flight mode", "Tethered", "Source evidence"]
+      ],
+      quantumionic: [
+        ["Energy-density target", "500 Wh/kg", "Theoretical framework"],
+        ["Dendrite mitigation", "Up to 84%", "Simulation result"],
+        ["Physical cells", "None assembled", "Source evidence"]
+      ],
+      aquapure: [
+        ["Operational run", "30 days", "Continuous site run"],
+        ["Throughput", "15,000 L/day", "Reported site metric"],
+        ["Heavy-metal rejection", "99.4%", "Reported site result"]
+      ]
+    };
+
+    const trlLevels = [
+      ["1", "Basic principles observed", "Scientific principles identified and reported."],
+      ["2", "Technology concept formulated", "A technology concept or application is described."],
+      ["3", "Proof of concept", "Analytical and experimental evidence supports critical functions."],
+      ["4", "Lab validation", "A component or breadboard is validated in a laboratory."],
+      ["5", "Relevant environment", "A component or breadboard is validated in a relevant environment."],
+      ["6", "Prototype demonstration", "A system or subsystem model is demonstrated in a relevant environment."],
+      ["7", "Operational demonstration", "A system prototype is demonstrated in an operational environment."],
+      ["8", "System qualified", "The actual system is completed and qualified."],
+      ["9", "Mission proven", "The actual system is proven in successful operations."]
+    ];
+
+    function renderProject(key) {
+      const project = projects[key];
+      const detail = document.getElementById("projectDetail");
+      detail.innerHTML = `
+        <div class="detail-heading">
+          <div><h2>${project.name}</h2><p>${project.title}</p></div>
+          <div class="detail-level"><b>TRL ${project.level}</b><span>Highest fully met</span></div>
+        </div>
+        <div class="detail-track">
+          <div class="track" aria-label="TRL ${project.level} of 9"><div class="track-fill" style="width:${project.level / 9 * 100}%"></div></div>
+          <div class="detail-track-labels"><span>TRL 1</span><span>${project.stage}</span><span>TRL 9</span></div>
+        </div>
+        <section class="detail-section"><h3>Evidence supporting this level</h3><div class="fact-grid">${project.evidence.map(([label, text]) => `<div class="fact"><b>${label}</b><span>${text}</span></div>`).join("")}</div></section>
+        <section class="detail-section"><h3>Assessment boundary</h3><div class="boundary">${project.boundary}</div></section>
+        <section class="detail-section"><h3>Next evidence gate</h3><div class="next-gate"><div><b>Path toward TRL ${project.level + 1}</b><p>${project.next}</p></div></div></section>
+        <div class="source">Source: ${project.source}</div>`;
+      document.querySelectorAll("[data-project]").forEach(button => {
+        if (button.classList.contains("project-option")) {
+          button.setAttribute("aria-pressed", String(button.dataset.project === key));
+        }
+      });
+    }
+
+    function activateTab(id) {
+      document.querySelectorAll(".tab").forEach(tab => tab.setAttribute("aria-selected", String(tab.dataset.tab === id)));
+      document.querySelectorAll(".view").forEach(view => view.classList.toggle("active", view.id === id));
+    }
+
+    const liveState = { project: "aerocrop", scenario: "normal", tick: 0, running: true, timer: null, history: [], activity: [] };
+
+    function illustrativeValue(config, tick, stress) {
+      const wave = Math.sin((tick + 1) * 1.7) * .62 + Math.cos((tick + 3) * .83) * .38;
+      const offset = stress ? config.stressOffset : 0;
+      return config.baseline + wave * config.spread + offset;
+    }
+
+    function formatMetric(value, precision, unit) {
+      const formatted = Number(value).toLocaleString(undefined, { minimumFractionDigits: precision, maximumFractionDigits: precision });
+      return unit === "%" ? `${formatted}${unit}` : `${formatted} ${unit}`;
+    }
+
+    function drawTrend(values, config) {
+      const line = document.getElementById("chartLine");
+      const area = document.getElementById("chartArea");
+      const end = document.getElementById("chartEnd");
+      if (!values.length) return;
+      const baseline = config.baseline;
+      const low = Math.min(...values, baseline) - config.spread * 2;
+      const high = Math.max(...values, baseline) + config.spread * 2;
+      const range = high - low || 1;
+      const points = values.map((value, index) => {
+        const x = 42 + (index / Math.max(values.length - 1, 1)) * 583;
+        const y = 130 - ((value - low) / range) * 110;
+        return [x, y];
+      });
+      const pointString = points.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ");
+      line.setAttribute("points", pointString);
+      area.setAttribute("d", `M ${points[0][0]},130 L ${pointString.replace(/ /g, " L ")} L ${points[points.length - 1][0]},130 Z`);
+      end.setAttribute("cx", points[points.length - 1][0].toFixed(1));
+      end.setAttribute("cy", points[points.length - 1][1].toFixed(1));
+      const ticks = document.querySelectorAll("#trendChart .chart-tick");
+      const decimals = config.precision;
+      ticks[0].textContent = formatMetric(high, decimals, config.unit);
+      ticks[1].textContent = formatMetric((low + high) / 2, decimals, config.unit);
+      ticks[2].textContent = formatMetric(low, decimals, config.unit);
+    }
+
+    function addActivity(message) {
+      const now = new Date();
+      liveState.activity.unshift({ time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }), message });
+      liveState.activity = liveState.activity.slice(0, 4);
+      document.getElementById("activityFeed").innerHTML = liveState.activity.map(item => `<div class="activity-item"><time>${item.time}</time>${item.message}</div>`).join("");
+    }
+
+    function refreshDashboard(advance) {
+      const key = liveState.project;
+      const project = projects[key];
+      const config = illustrativeTrends[key];
+      const stress = liveState.scenario === "stress";
+      if (advance) liveState.tick += 1;
+
+      document.getElementById("liveProjectName").textContent = project.name;
+      document.getElementById("liveProjectSummary").textContent = project.stage;
+      document.getElementById("liveTrl").textContent = `TRL ${project.level} · assessed`;
+      document.getElementById("chartTitle").textContent = config.chart;
+      document.getElementById("chartBasis").textContent = config.basis;
+
+      document.getElementById("liveKpis").innerHTML = sourceFacts[key].map(([label, value, note]) =>
+        `<div class="live-kpi"><div class="live-kpi-label">${label}</div><div class="live-kpi-value">${value}</div><div class="live-kpi-note">${note}</div></div>`
+      ).join("");
+
+      const primary = illustrativeValue(config, liveState.tick, stress);
+      liveState.history.push(primary);
+      liveState.history = liveState.history.slice(-24);
+      drawTrend(liveState.history, config);
+
+      const alert = document.getElementById("alertBox");
+      const isAlert = stress;
+      alert.classList.toggle("warning", isAlert);
+      alert.innerHTML = isAlert
+        ? `<strong>ILLUSTRATIVE SCENARIO · DOCUMENTED GAP</strong>${config.stressInsight}`
+        : `<strong>ASSESSMENT CONTEXT</strong>${config.normalInsight}`;
+
+      document.getElementById("lastUpdated").textContent = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" });
+      document.getElementById("runState").textContent = liveState.running ? "AUTO-REFRESH" : "PAUSED";
+      document.getElementById("toggleRun").textContent = liveState.running ? "Pause" : "Resume";
+
+      if (advance) {
+        addActivity(stress
+          ? `${project.name}: illustrative stress trend refreshed; source-backed facts unchanged.`
+          : `${project.name}: illustrative trend refreshed; source-backed facts unchanged.`);
+      }
+    }
+
+    function selectLiveProject(key) {
+      liveState.project = key;
+      liveState.tick = 0;
+      liveState.history = [];
+      liveState.activity = [];
+      const config = illustrativeTrends[key];
+      for (let index = 0; index < 18; index += 1) {
+        liveState.history.push(config.baseline + Math.sin(index * .79) * config.spread * .38);
+      }
+      addActivity(`${projects[key].name}: illustrative chart initialized from a source-reported reference.`);
+      refreshDashboard(false);
+    }
+
+    document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => activateTab(tab.dataset.tab)));
+    document.querySelectorAll("[data-open-tab]").forEach(button => button.addEventListener("click", () => activateTab(button.dataset.openTab)));
+    document.querySelectorAll("[data-project]").forEach(button => button.addEventListener("click", () => {
+      renderProject(button.dataset.project);
+      if (!button.classList.contains("project-option")) activateTab("projects");
+    }));
+    document.getElementById("printButton").addEventListener("click", () => window.print());
+    document.getElementById("trlGrid").innerHTML = trlLevels.map(([level, name, description]) => `
+      <article class="trl-card ${[2, 4, 7].includes(Number(level)) ? "current" : ""}">
+        <div class="trl-number">TRL ${level}${[2, 4, 7].includes(Number(level)) ? " / assessed" : ""}</div>
+        <h3>${name}</h3><p>${description}</p>
+      </article>`).join("");
+    renderProject("aerocrop");
+    document.getElementById("liveProject").addEventListener("change", event => selectLiveProject(event.target.value));
+    document.getElementById("scenarioSelect").addEventListener("change", event => {
+      liveState.scenario = event.target.value;
+      refreshDashboard(false);
+      addActivity(`${projects[liveState.project].name}: switched to ${liveState.scenario === "stress" ? "illustrative stress case" : "reference view"}.`);
+    });
+    document.getElementById("toggleRun").addEventListener("click", () => {
+      liveState.running = !liveState.running;
+      document.getElementById("runState").textContent = liveState.running ? "AUTO-REFRESH" : "PAUSED";
+      document.getElementById("toggleRun").textContent = liveState.running ? "Pause" : "Resume";
+      addActivity(`Illustrative chart refresh ${liveState.running ? "resumed" : "paused"}.`);
+    });
+    document.getElementById("stepTick").addEventListener("click", () => refreshDashboard(true));
+    selectLiveProject(liveState.project);
+    liveState.timer = window.setInterval(() => {
+      if (liveState.running) refreshDashboard(true);
+    }, 2200);
+
+    const shell = document.querySelector(".shell");
+    const fullscreenButton = document.getElementById("fullscreenButton");
+    fullscreenButton.addEventListener("click", async () => {
+      try {
+        if (document.fullscreenElement) await document.exitFullscreen();
+        else await shell.requestFullscreen();
+      } catch (error) {
+        window.alert(`Could not enter full-screen mode: ${error.message}`);
+      }
+    });
+    document.addEventListener("fullscreenchange", () => {
+      const isFullscreen = document.fullscreenElement === shell;
+      fullscreenButton.textContent = isFullscreen ? "Exit full screen" : "Present full screen";
+      fullscreenButton.setAttribute("aria-label", isFullscreen ? "Exit full-screen presentation mode" : "Enter full-screen presentation mode");
+    });
+    document.addEventListener("keydown", event => {
+      if (event.altKey || event.ctrlKey || event.metaKey || !(event.target instanceof Element) || event.target.matches("input, select, textarea, button")) return;
+      const tabByKey = { "1": "dashboard", "2": "overview", "3": "projects", "4": "framework" };
+      if (tabByKey[event.key]) activateTab(tabByKey[event.key]);
+    });
+  </script>
+</body>
+</html>
